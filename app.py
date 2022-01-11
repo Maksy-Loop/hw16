@@ -2,6 +2,8 @@ from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from funforflask import get_all_users, get_user, get_all_orders, get_order, get_all_offers, get_offer
 import sql
+import json
+from function import json_to_list
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
@@ -34,7 +36,32 @@ def page_users():
 
 @app.route("/users/<int:id>", methods=["GET", "PUT", "DELETE"])
 def page_users_id(id):
-    return jsonify(get_user(id))
+    if request.method == "GET":
+        return jsonify(get_user(id))
+
+    if request.method == "PUT":
+
+        dict_json = request.json
+
+        user = db.session.query(sql.Users).get(id)
+
+        user.first_name = dict_json.get("first_name")
+        user.last_name = dict_json.get("last_name")
+        user.age = dict_json.get("age")
+        user.email = dict_json.get("email")
+        user.role = dict_json.get("role")
+        user.phone = dict_json.get("phone")
+
+        db.session.add(user)
+        db.session.commit()
+        return f'Данные перезаписаны'
+
+    if request.method == "DELETE":
+        user = db.session.query(sql.Users).get(id)
+        db.session.delete(user)
+        db.session.commit()
+
+        return f'Пользователь удален'
 
 
 @app.route("/orders")

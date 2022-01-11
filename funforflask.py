@@ -110,8 +110,3 @@ def get_offer(id):
         }
 
     return offer_dict
-
-
-#print(get_all_users())
-
-#print(get_user(31))
