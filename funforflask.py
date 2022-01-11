@@ -1,4 +1,3 @@
-import json
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 import sql
@@ -9,6 +8,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 
+#функции для пост запроса к роутам, вытягивают всех пользователей или по айди
 def get_all_users():
     user = db.session.query(sql.Users).all()
     list_users = []

@@ -8,7 +8,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
-
+#создаем модели
 class Users(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
@@ -40,8 +40,7 @@ class Orders(db.Model):
     executor_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
 
-
-db.create_all()
+#db.create_all()
 #db.drop_all()
 
 # реазизовали функции чтобы положить данные json в базу

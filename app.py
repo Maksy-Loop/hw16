@@ -64,27 +64,118 @@ def page_users_id(id):
         return f'Пользователь удален'
 
 
-@app.route("/orders")
+@app.route("/orders", methods=["GET", "POST"])
 def page_orders():
-    return jsonify(get_all_orders())
+    if request.method == "GET":
+        return jsonify(get_all_orders())
 
-@app.route("/orders/<int:id>")
+    if request.method == "POST":
+        name = request.form.get("name")
+        description = request.form.get("description")
+        start_date = request.form.get("start_date")
+        end_date = request.form.get("end_date")
+        address = request.form.get("address")
+        price = request.form.get("price")
+        customer_id = request.form.get("customer_id")
+        executor_id = request.form.get("executor_id")
+
+        if name and description and start_date and end_date and address and price and customer_id and executor_id:
+            order = sql.Users(
+                name=name,
+                description=description,
+                start_date=start_date,
+                end_date=end_date,
+                address=address,
+                price=price,
+                customer_id=customer_id,
+                executor_id=executor_id
+            )
+            db.session.add(order)
+            db.session.commit()
+
+            return "Заказ добален"
+        else:
+            return "Отправка не корректная"
+
+
+@app.route("/orders/<int:id>", methods=["GET", "PUT", "DELETE"])
 def page_order_id(id):
-    return jsonify(get_order(id))
+
+    if request.method == "GET":
+        return jsonify(get_order(id))
+
+    if request.method == "PUT":
+
+        dict_json = request.json
+
+        order = db.session.query(sql.Orders).get(id)
+
+        order.name = dict_json.get("name")
+        order.description = dict_json.get("description")
+        order.start_date = dict_json.get("start_date")
+        order.end_date = dict_json.get("end_date")
+        order.address = dict_json.get("address")
+        order.price = dict_json.get("price")
+        order.customer_id = dict_json.get("customer_id")
+        order.executor_id = dict_json.get("executor_id")
+
+        db.session.add(order)
+        db.session.commit()
+        return f'Данные перезаписаны'
+
+    if request.method == "DELETE":
+        user = db.session.query(sql.Orders).get(id)
+        db.session.delete(user)
+        db.session.commit()
+
+        return f'Заказ удален'
 
 
-@app.route("/offers")
+@app.route("/offers", methods=["GET", "POST"])
 def page_offers():
-    return jsonify(get_all_offers())
 
-@app.route("/offers/<int:id>")
+    if request.method == "GET":
+        return jsonify(get_all_offers())
+
+    if request.method == "POST":
+        order_id = request.form.get("order_id")
+        executor_id = request.form.get("executor_id")
+
+        if order_id and executor_id:
+            offer = sql.Offers(order_id=order_id, executor_id=executor_id)
+            db.session.add(offer)
+            db.session.commit()
+
+            return "Оффер добален"
+        else:
+            return "Отправка не корректная"
+
+
+@app.route("/offers/<int:id>", methods=["GET", "PUT", "DELETE"])
 def page_offer_id(id):
-    return jsonify(get_offer(id))
 
+    if request.method == "GET":
+        return jsonify(get_offer(id))
 
+    if request.method == "PUT":
 
+        dict_json = request.json
 
+        offer = db.session.query(sql.Offers).get(id)
 
+        offer.order_id = dict_json.get("order_id")
+        offer.executor_id = dict_json.get("executor_id")
+
+        db.session.add(offer)
+        db.session.commit()
+        return f'Данные перезаписаны'
+
+    if request.method == "DELETE":
+        offer = db.session.query(sql.Offers).get(id)
+        db.session.delete(offer)
+        db.session.commit()
+
+        return f'Оффер удален'
 
 
 if __name__ == "__main__":
