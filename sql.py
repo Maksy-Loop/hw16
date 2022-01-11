@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 import datetime as DT
+from function import json_to_list
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
@@ -38,7 +39,9 @@ class Orders(db.Model):
     customer_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     executor_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
-#db.create_all()
+
+
+db.create_all()
 #db.drop_all()
 
 # реазизовали функции чтобы положить данные json в базу
